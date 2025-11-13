@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dashboard - Score Analytics</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <h1>📈 แดชบอร์ดสรุปคะแนน - โรงเรียนประถมศึกษา</h1>
+          <p>สรุปคะแนนและข้อมูลการเรียนนักเรียนชั้น ป.1-6</p>
+        </div>
+        <nav class="nav-links">
+          <a href="report.html" class="nav-btn">📊 รายงานรายบุคคล</a>
+        </nav>
+      </header>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label for="searchInput">🔍 ค้นหา:</label>
+          <input type="text" id="searchInput" placeholder="ค้นหาชื่อนักเรียน...">
+        </div>
+
+        <div class="filter-group">
+          <label for="filterGrade">ชั้นปี:</label>
+          <select id="filterGrade">
+            <option value="">-- ทั้งหมด --</option>
+            <option value="ป1">ป.1</option>
+            <option value="ป2">ป.2</option>
+            <option value="ป3">ป.3</option>
+            <option value="ป4">ป.4</option>
+            <option value="ป5">ป.5</option>
+            <option value="ป6">ป.6</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterSubject">วิชา:</label>
+          <select id="filterSubject">
+            <option value="">-- ทั้งหมด --</option>
+            <option value="คณิตศาสตร์">คณิตศาสตร์</option>
+            <option value="ภาษาไทย">ภาษาไทย</option>
+            <option value="วิทยาศาสตร์">วิทยาศาสตร์</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="search-results" id="searchResults">
+        <h3>📋 ผลการค้นหา</h3>
+        <div class="search-results-list" id="searchResultsList">
+          <!-- Search results will be inserted here -->
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <div class="stat-label">จำนวนนักเรียนทั้งหมด</div>
+            <div class="stat-value" id="totalStudents">9</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-info">
+            <div class="stat-label">จำนวนวิชา</div>
+            <div class="stat-value" id="totalSubjects">9</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-info">
+            <div class="stat-label">คะแนนเฉลี่ยทั้งหมด</div>
+            <div class="stat-value" id="avgScoreAll">--</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-info">
+            <div class="stat-label">คะแนนสูงสุด</div>
+            <div class="stat-value" id="maxScoreAll">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3>📊 การแจกแจงคะแนนตามระดับ</h3>
+          <canvas id="levelChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <h3>📚 คะแนนเฉลี่ยตามวิชา</h3>
+          <canvas id="subjectChart"></canvas>
+        </div>
+      </div>
+
+      <div class="subject-details">
+        <h3>📋 สรุปคะแนนรายวิชา</h3>
+        <div class="subject-list" id="subjectList">
+          <!-- Subject cards will be inserted here -->
+        </div>
+      </div>
+
+      <div class="performance-section">
+        <h3>🎯 อันดับผู้เรียน (Top Performers)</h3>
+        <div class="top-students" id="topStudents">
+          <!-- Top students will be inserted here -->
+        </div>
+      </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>

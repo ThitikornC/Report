@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Game Score Report</title>
+    <link rel="stylesheet" href="css/report.css">
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <h1>📊 รายงานคะแนนนักเรียน - โรงเรียนประถมศึกษา</h1>
+          <p>แสดงคะแนนวิชา 3 รายวิชาของนักเรียนชั้น ป.1-6</p>
+        </div>
+        <nav class="nav-links">
+          <a href="dashboard.html" class="nav-btn">📈 แดชบอร์ด</a>
+        </nav>
+      </header>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label for="searchInputReport">🔍 ค้นหา:</label>
+          <input type="text" id="searchInputReport" placeholder="ค้นหาชื่อนักเรียน...">
+        </div>
+
+        <div class="filter-group">
+          <label for="gradeSelect">ชั้นปี:</label>
+          <select id="gradeSelect">
+            <option value="">-- เลือกชั้นปี --</option>
+            <option value="ป1">ป.1</option>
+            <option value="ป2">ป.2</option>
+            <option value="ป3">ป.3</option>
+            <option value="ป4">ป.4</option>
+            <option value="ป5">ป.5</option>
+            <option value="ป6">ป.6</option>
+          </select>
+        </div>
+
+        <div class="filter-group" style="display:none;" id="studentSelectGroup">
+          <label for="studentSelect">เลือกชื่อนักเรียน:</label>
+          <select id="studentSelect" disabled>
+            <option value="">-- เลือกนักเรียน --</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="subjectSelect">เลือกวิชา:</label>
+          <select id="subjectSelect" disabled>
+            <option value="">-- เลือกวิชา (ทั้งหมด) --</option>
+            <option value="คณิตศาสตร์">คณิตศาสตร์</option>
+            <option value="ภาษาไทย">ภาษาไทย</option>
+            <option value="วิทยาศาสตร์">วิทยาศาสตร์</option>
+          </select>
+        </div>
+        <div class="search-results-report" id="searchResultsReport" style="display:none;">
+          <h3 class="search-results-title">📄 ผลการค้นหา</h3>
+          <div class="search-results-list-report" id="searchResultsListReport"></div>
+        </div>
+      </div>
+
+      <div id="reportContent" class="report-content">
+        <div class="placeholder">
+          <p>⬆️ กรุณาเลือกระดับการศึกษาและนักเรียนเพื่อดูคะแนน</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/report.js"></script>
+  </body>
+</html>
