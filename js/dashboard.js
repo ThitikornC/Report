@@ -101,6 +101,16 @@ function $(sel) {
   return document.querySelector(sel);
 }
 
+// Safe element getter by id (returns null if not found)
+function byId(id) {
+  return document.getElementById(id) || null;
+}
+
+function safeSetText(id, text) {
+  const el = byId(id);
+  if (el) el.textContent = text;
+}
+
 // Collect all scores and subjects (with filtering)
 function getAllScoresAndSubjects(gradeFilter = '', subjectFilter = '') {
   let allScores = [];
@@ -133,10 +143,10 @@ function updateStats(gradeFilter = '', subjectFilter = '') {
   const { allScores, subjectMap } = getAllScoresAndSubjects(gradeFilter, subjectFilter);
   
   if (allScores.length === 0) {
-    $('#totalStudents').textContent = '0';
-    $('#totalSubjects').textContent = '0';
-    $('#avgScoreAll').textContent = '--';
-    $('#maxScoreAll').textContent = '--';
+    safeSetText('totalStudents', '0');
+    safeSetText('totalSubjects', '0');
+    safeSetText('avgScoreAll', '--');
+    safeSetText('maxScoreAll', '--');
     return;
   }
 
@@ -154,16 +164,17 @@ function updateStats(gradeFilter = '', subjectFilter = '') {
   const maxScore = Math.max(...allScores);
   const uniqueSubjects = Object.keys(subjectMap).length;
 
-  $('#totalStudents').textContent = uniqueNames.size;
-  $('#totalSubjects').textContent = uniqueSubjects;
-  $('#avgScoreAll').textContent = avgScore;
-  $('#maxScoreAll').textContent = maxScore;
+  safeSetText('totalStudents', uniqueNames.size);
+  safeSetText('totalSubjects', uniqueSubjects);
+  safeSetText('avgScoreAll', avgScore);
+  safeSetText('maxScoreAll', maxScore);
 }
 
 // Display subject cards
 function displaySubjects(gradeFilter = '', subjectFilter = '') {
   const { subjectMap } = getAllScoresAndSubjects(gradeFilter, subjectFilter);
-  const subjectList = $('#subjectList');
+  const subjectList = byId('subjectList');
+  if (!subjectList) return; // nothing to render into
   subjectList.innerHTML = '';
 
   Object.entries(subjectMap).forEach(([name, scores]) => {
@@ -193,10 +204,10 @@ function getTopStudents(gradeFilter = '', subjectFilter = '') {
       }
       
       if (relevantSubjects.length > 0) {
-        const avgScore = (relevantSubjects.reduce((sum, s) => sum + s.score, 0) / relevantSubjects.length).toFixed(1);
+        const avgScore = (relevantSubjects.reduce((sum, s) => sum + s.score, 0) / relevantSubjects.length);
         allStudents.push({
           name: student.name,
-          score: avgScore,
+          score: Number(avgScore.toFixed(1)), // store as number for correct sorting
           grade: student.grade
         });
       }
@@ -211,7 +222,8 @@ function getTopStudents(gradeFilter = '', subjectFilter = '') {
 // Display top students
 function displayTopStudents(gradeFilter = '', subjectFilter = '') {
   const topStudents = getTopStudents(gradeFilter, subjectFilter);
-  const topStudentsDiv = $('#topStudents');
+  const topStudentsDiv = byId('topStudents');
+  if (!topStudentsDiv) return;
   topStudentsDiv.innerHTML = '';
 
   if (topStudents.length === 0) {
@@ -253,7 +265,9 @@ function createLevelChart(gradeFilter = '', subjectFilter = '') {
     return allScores.length > 0 ? (allScores.reduce((a, b) => a + b, 0) / allScores.length).toFixed(1) : 0;
   });
 
-  const ctx = document.getElementById('levelChart').getContext('2d');
+  const levelCanvas = byId('levelChart');
+  if (!levelCanvas || typeof Chart === 'undefined') return;
+  const ctx = levelCanvas.getContext('2d');
   if (levelChart) levelChart.destroy();
 
   // Check for empty data
@@ -303,7 +317,9 @@ function createSubjectChart(gradeFilter = '', subjectFilter = '') {
   
   // If no data, show empty chart
   if (subjects.length === 0) {
-    const ctx = document.getElementById('subjectChart').getContext('2d');
+    const subjectCanvas = byId('subjectChart');
+    if (!subjectCanvas || typeof Chart === 'undefined') return;
+    const ctx = subjectCanvas.getContext('2d');
     if (subjectChart) subjectChart.destroy();
     subjectChart = new Chart(ctx, {
       type: 'radar',
@@ -320,23 +336,26 @@ function createSubjectChart(gradeFilter = '', subjectFilter = '') {
 
   const averages = subjects.map(s => (subjectMap[s].reduce((a, b) => a + b, 0) / subjectMap[s].length).toFixed(1));
 
-  const ctx = document.getElementById('subjectChart').getContext('2d');
+  const subjectCanvas = byId('subjectChart');
+  if (!subjectCanvas || typeof Chart === 'undefined') return;
+  const ctx = subjectCanvas.getContext('2d');
   if (subjectChart) subjectChart.destroy();
-
   subjectChart = new Chart(ctx, {
     type: 'radar',
     data: {
       labels: subjects,
-      datasets: [{
-        label: 'คะแนนเฉลี่ย',
-        data: averages,
-        borderColor: '#9d8e54',
-        backgroundColor: 'rgba(157, 142, 84, 0.2)',
-        borderWidth: 2,
-        pointBackgroundColor: '#6b2d1f',
-        pointBorderColor: '#faf8f3',
-        pointBorderWidth: 2
-      }]
+      datasets: [
+        {
+          label: 'คะแนนเฉลี่ย',
+          data: averages,
+          borderColor: '#9d8e54',
+          backgroundColor: 'rgba(157, 142, 84, 0.2)',
+          borderWidth: 2,
+          pointBackgroundColor: '#6b2d1f',
+          pointBorderColor: '#faf8f3',
+          pointBorderWidth: 2
+        }
+      ]
     },
     options: {
       responsive: true,
@@ -424,11 +443,11 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('filterSubject:', $('#filterSubject'));
 
   function refreshDashboard() {
-    const gradeFilter = $('#filterGrade').value;
-    const subjectFilter = $('#filterSubject').value;
-    
+    const gradeFilter = $('#filterGrade')?.value || '';
+    const subjectFilter = $('#filterSubject')?.value || '';
+
     console.log('Grade:', gradeFilter, 'Subject:', subjectFilter);
-    
+
     updateStats(gradeFilter, subjectFilter);
     displaySubjects(gradeFilter, subjectFilter);
     displayTopStudents(gradeFilter, subjectFilter);
@@ -439,6 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial load
   refreshDashboard();
 
+  // Add event listeners
   // Add event listeners
   if ($('#filterGrade')) $('#filterGrade').addEventListener('change', refreshDashboard);
   if ($('#filterSubject')) $('#filterSubject').addEventListener('change', refreshDashboard);
